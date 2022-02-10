@@ -1,0 +1,63 @@
+<router-outlet></router-outlet>
+
+<button mat-button (click)="generateNewLeague()">Generate new league</button>
+
+
+<table mat-table [dataSource]="leagues" class="mat-elevation-z8">
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Position Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="participants">
+    <th mat-header-cell *matHeaderCellDef> Participants </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngFor="let p of element.participants">
+        {{p.name}}<br>
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="matches">
+    <th mat-header-cell *matHeaderCellDef> Matches </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngFor="let gr of element.gameRounds;let i=index">
+        <div>Round:{{i+1}}</div>
+        <span *ngFor="let gm of gr.gameMatches">
+          <ng-container *ngIf="gm.winner">
+            {{gm.winner.name}} won<br>
+          </ng-container>
+        </span>
+        <hr>
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button (click)='closeLastRound(element)' mat-menu-item [disabled]='element.gameRounds.slice(-1)[0].length==1'>
+          <mat-icon>close</mat-icon>
+          <span>Close Round</span>
+        </button>
+        <button (click)='makeThemWin(element)' mat-menu-item>
+          <mat-icon>fast_forward</mat-icon>
+          <span>Set Winners for on going round</span>
+        </button>
+      </mat-menu>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
